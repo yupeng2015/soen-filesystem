@@ -1,0 +1,21 @@
+{
+  "name": "soen/filesystem",
+  "description": "",
+  "type": "library",
+  "keywords": ["soen", "filesystem"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "soen",
+      "email": "soen66@163.com"
+    }
+  ],
+  "require": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Soen\\Filesystem\\": "src/"
+    }
+  },
+  "minimum-stability": "dev"
+}
