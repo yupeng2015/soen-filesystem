@@ -26,7 +26,7 @@ class File
 
     function createFilesystemIterator(string $dir){
         $this->setDirPath($dir);
-        $this->filesystemIterator = new FilesystemIterator($this->dirPath);
+        $this->filesystemIterator = new FilesystemIterator($this->dirPath, FilesystemIterator::CURRENT_AS_SELF);
         return $this;
     }
 
@@ -52,24 +52,29 @@ class File
     }
 
     /**
+     * @param FilesystemIterator $filesystemIterator
      * @param array $array
      * @return array
      */
-    function readArrayFilesDeep(&$array = []):array {
-        $files = $this->filesystemIterator;
-        while ($files->valid()){
-            if($files->isDir()){
-//                $files = $files->current();
-                $this->readArrayFilesDeep();
+    function readArrayFilesDeep(FilesystemIterator $filesystemIterator = null, &$array = []):array {
+        if(!$filesystemIterator){
+            $filesystemIterator = $this->filesystemIterator;
+        }
+        while ($filesystemIterator->valid()){
+            if($filesystemIterator->isDir()){
+                $this->readArrayFilesDeep(new FilesystemIterator($filesystemIterator->key()), $array);
             } else {
-                $filePath = $files->getPathname();
-                if($files->getExtension() === 'php') {
-//                    $array = array_merge($array, require_once $filePath);
+                $filePath = $filesystemIterator->getPathname();
+                if($filesystemIterator->getExtension() === 'php') {
                     $array[] = require_once $filePath;
                 }
             }
-            $files->next();
+            $filesystemIterator->next();
         }
         return $array;
+    }
+
+    public function getConfigData () {
+       return $this->readArrayFilesDeep($this->filesystemIterator);
     }
 }
